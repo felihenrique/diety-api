@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "outDir": "build",
+    "module": "commonjs"
+  },
+  "exclude": ["node_modules", "**/*.spec.ts", "**/*.test.ts"],
+  "include": ["src/**/*.ts"]
+}
