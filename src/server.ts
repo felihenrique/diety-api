@@ -2,8 +2,7 @@ import { createKoaServer, Action } from "routing-controllers";
 import { createConnection, getRepository } from "typeorm";
 import * as helmet from "koa-helmet";
 import * as Koa from "koa";
-import * as jwt from "jsonwebtoken";
-import { JWT_SECRET } from "./config";
+import { tokenExists, getTokenData } from "./token";
 
 (async function() {
   await createConnection();
@@ -16,28 +15,23 @@ import { JWT_SECRET } from "./config";
       forbidNonWhitelisted: true,
       validationError: { target: false }
     },
-    authorizationChecker: (action: Action, roles: String[]) => {
+    authorizationChecker: async (action: Action, roles: String[]) => {
       const token: string = action.request.headers["authorization"];
       if (!token) return false;
-      try {
-        const payload: any = jwt.verify(token, JWT_SECRET);
-        if (roles.includes("OWNER")) {
-          return parseInt(action.context.params.id) === payload.userId;
-        }
-        return true;
-      } catch (err) {
-        return false;
+      const tokenData = await getTokenData(token);
+      if (!tokenData) return false;
+      if(roles.includes("OWNER")) {
+        return tokenData.userId === parseInt(action.context.params.id);
       }
+      return true;
     },
     currentUserChecker: async (action: Action) => {
       const token: string = action.request.headers["authorization"];
-      if (!token) return null;
-      try {
-        const payload: any = jwt.verify(token, JWT_SECRET);
-        return payload.userId;
-      } catch (err) {
+      const data = await getTokenData(token);
+      if(!data) {
         return null;
       }
+      return data.userId;
     }
   });
   app.use(helmet());

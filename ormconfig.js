@@ -6,6 +6,6 @@ module.exports = {
   password: "diety_main",
   database: "diety",
   entities: [__dirname + "/**/*.model.ts"],
-  //synchronize: true
+  //synchronize: true,
   logging: true
 };

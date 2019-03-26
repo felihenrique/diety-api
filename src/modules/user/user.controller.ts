@@ -6,15 +6,13 @@ import {
   Authorized,
   BodyParam,
   Param,
-  CurrentUser,
-  ForbiddenError,
   UnauthorizedError
 } from "routing-controllers";
 import User from "./user.model";
 import { getRepository } from "typeorm";
 import * as bcrypt from "bcrypt";
-import * as jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../../config";
+import * as uuid from "uuid/v4";
+import { setTokenData } from "../../token";
 
 @JsonController("/users")
 export default class UserController {
@@ -48,9 +46,11 @@ export default class UserController {
     if (!equal) {
       throw new UnauthorizedError();
     }
+    const token = uuid();
+    await setTokenData(token, { userId: user.id });
     return {
       userId: user.id,
-      token: jwt.sign({ userId: user.id }, JWT_SECRET)
+      token
     };
   }
 }

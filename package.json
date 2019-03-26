@@ -17,13 +17,13 @@
     "@types/koa-router": "^7.0.40",
     "@types/node": "^11.11.5",
     "@types/redis": "^2.8.11",
+    "@types/uuid": "^3.4.4",
     "nodemon": "^1.18.10",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.4000"
   },
   "dependencies": {
     "bcrypt": "^3.0.5",
-    "jsonwebtoken": "^8.5.1",
     "koa": "^2.7.0",
     "koa-bodyparser": "^4.2.1",
     "koa-helmet": "^4.1.0",
@@ -32,6 +32,7 @@
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.7.7",
-    "typeorm": "^0.2.15"
+    "typeorm": "^0.2.15",
+    "uuid": "^3.3.2"
   }
 }
