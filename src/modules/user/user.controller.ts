@@ -23,7 +23,7 @@ export default class UserController {
   @Get("/:id")
   @Authorized("OWNER")
   async getById(@Param("id") id: number) {
-    return this.userRepository.findOne(id);
+    return this.userRepository.findOne(id, {relations: ["profile"]})
   }
 
   @Post()
@@ -37,8 +37,8 @@ export default class UserController {
 
   @Post("/login")
   async login(
-    @BodyParam("email") email: String,
-    @BodyParam("password") password: String
+    @BodyParam("email") email: string,
+    @BodyParam("password") password: string
   ) {
     const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {

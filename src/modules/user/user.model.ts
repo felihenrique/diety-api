@@ -1,29 +1,24 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from "typeorm";
-import { IsEmail, IsNotEmpty } from "class-validator";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm";
+import { IsEmail, ValidateNested, IsNotEmpty } from "class-validator";
 import { IsEmailUnique } from "../../validators/isEmailUnique";
 import Food from "../food/food.model";
-import { Exclude } from "class-transformer";
+import { Exclude, Type } from "class-transformer";
+import Profile from "./profile.model";
 
 @Entity()
 export default class User {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @IsNotEmpty({
-    message: "O nome é obrigatório"
-  })
-  @Column()
-  name: string;
-
-  @IsEmailUnique({
-    message: "O email já está sendo usado"
-  })
   @IsEmail(
     {},
     {
       message: "O email é obrigatório"
     }
   )
+  @IsEmailUnique({
+    message: "O email já está sendo usado"
+  })
   @Column()
   email: string;
 
@@ -36,6 +31,13 @@ export default class User {
     default: () => "CURRENT_TIMESTAMP"
   })
   createdAt: Date;
+
+  @OneToOne(type => Profile)
+  @ValidateNested()
+  @Type(type => Profile)
+  @IsNotEmpty()
+  @JoinColumn()
+  profile: Profile;
 
   @OneToMany(type => Food, food => food.user)
   foods: Promise<Food[]>;

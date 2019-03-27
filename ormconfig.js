@@ -1,3 +1,5 @@
+const path = require('path');
+
 module.exports = {
   type: "postgres",
   host: "localhost",
@@ -5,7 +7,7 @@ module.exports = {
   username: "postgres",
   password: "diety_main",
   database: "diety",
-  entities: [__dirname + "/**/*.model.ts"],
-  //synchronize: true,
+  entities: [path.join(__dirname, "src/modules/**/*.model.ts")],
+  synchronize: true,
   logging: true
 };
