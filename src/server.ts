@@ -1,8 +1,9 @@
 import { createKoaServer, Action } from "routing-controllers";
-import { createConnection, getRepository } from "typeorm";
+import { createConnection } from "typeorm";
 import * as helmet from "koa-helmet";
 import * as Koa from "koa";
-import { tokenExists, getTokenData } from "./token";
+import { getTokenData, removeToken } from "./token";
+import {isPast} from 'date-fns';
 
 (async function() {
   await createConnection();
@@ -17,9 +18,16 @@ import { tokenExists, getTokenData } from "./token";
     },
     authorizationChecker: async (action: Action, roles: String[]) => {
       const token: string = action.request.headers["authorization"];
+      // User does not passed the token
       if (!token) return false;
       const tokenData = await getTokenData(token);
+      // Token does not exists
       if (!tokenData) return false;
+      // Token has expired
+      if(isPast(tokenData.expiresAt)) {
+        await removeToken(token);
+        return false;
+      }
       if(roles.includes("OWNER")) {
         return tokenData.userId === parseInt(action.context.params.id);
       }

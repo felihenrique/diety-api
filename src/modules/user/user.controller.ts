@@ -6,13 +6,15 @@ import {
   Authorized,
   BodyParam,
   Param,
-  UnauthorizedError
+  UnauthorizedError,
+  HeaderParam
 } from "routing-controllers";
 import User from "./user.model";
 import { getRepository } from "typeorm";
 import * as bcrypt from "bcrypt";
 import * as uuid from "uuid/v4";
-import { setTokenData } from "../../token";
+import { setTokenData, removeToken } from "../../token";
+import { TOKEN_TTL } from "../../config";
 
 @JsonController("/users")
 export default class UserController {
@@ -47,10 +49,20 @@ export default class UserController {
       throw new UnauthorizedError();
     }
     const token = uuid();
-    await setTokenData(token, { userId: user.id });
+    await setTokenData(token, {
+      userId: user.id,
+      expiresAt: Date.now() + TOKEN_TTL
+    });
     return {
       userId: user.id,
       token
     };
+  }
+
+  @Post("/logout")
+  @Authorized()
+  async logout(@HeaderParam("authorization") token: string) {
+    await removeToken(token);
+    return { message: "user logged out" };
   }
 }

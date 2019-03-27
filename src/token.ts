@@ -9,6 +9,7 @@ client.on("error", function(err) {
 
 interface TokenData {
     userId: number;
+    expiresAt: number;
 }
 
 /**
@@ -34,6 +35,19 @@ export function getTokenData(token: string) : Promise<TokenData> {
         client.hget("tokens", token, (err, reply) => {
             if(err) reject(err);
             resolve(JSON.parse(reply));
+        });
+    });
+}
+
+/**
+ * Remove um token do servidor de antenticação
+ * @param token Token para remover
+ */
+export function removeToken(token: string) : Promise<number> {
+    return new Promise((resolve, reject) => {
+        client.hset("tokens", token, null, (err, reply) => {
+            if(err) reject(err);
+            resolve(reply);
         });
     });
 }

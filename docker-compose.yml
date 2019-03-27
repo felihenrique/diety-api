@@ -4,14 +4,14 @@ services:
   postgres:
     image: postgres:11.2-alpine
     ports:
-      - 127.0.0.1:5432:5432
+      - 5432:5432
     environment:
       POSTGRES_DB: diety
       POSTGRES_PASSWORD: diety_main
   pgadmin:
     image: dpage/pgadmin4
     ports:
-      - 127.0.0.1:5555:5555
+      - 5555:5555
     environment:
       PGADMIN_DEFAULT_EMAIL: felihenrique@gmail.com
       PGADMIN_DEFAULT_PASSWORD: 123456
@@ -19,5 +19,5 @@ services:
   redis:
     image: redis:5.0.4-alpine
     ports:
-      - 127.0.0.1:6379:6379
+      - 6379:6379
   # colocar: elasticsearch, nginx com reverse proxy
