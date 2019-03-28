@@ -4,11 +4,18 @@ import {
   Body,
   Param,
   Get,
-  Authorized
+  Authorized,
+  Put
 } from "routing-controllers";
 import Food from "./food.model";
 import User from "../user/user.model";
-import { getRepository } from "typeorm";
+import {
+  getRepository,
+  DeepPartial,
+  LessThanOrEqual,
+  Like,
+  Equal
+} from "typeorm";
 
 @JsonController()
 export default class FoodController {
@@ -16,24 +23,32 @@ export default class FoodController {
   foodRepository = getRepository<Food>(Food);
 
   @Get("/foods")
-  async getAllFoods() {
+  getAllFoods() {
     return this.foodRepository.find({ loadRelationIds: true });
   }
 
   @Authorized("OWNER")
   @Get("/users/:id/foods")
-  async getUserFood(@Param("id") id: number) {
-    const foods = await this.foodRepository.find({
-      where: { user: { id } },
+  getUserFoods(@Param("id") id: number) {
+    return this.foodRepository.find({
+      where: { id: Equal(6) },
       loadRelationIds: true
     });
-    return foods;
   }
 
   @Post("/users/:id/foods")
   @Authorized("OWNER")
-  async createUserFood(@Body() food: Food, @Param("id") id: number) {
+  createUserFood(@Body() food: Food, @Param("id") id: number) {
     food.user = this.userRepository.create({ id });
     return this.foodRepository.save(food);
+  }
+
+  @Put("/users/:id/foods/:foodId")
+  @Authorized("OWNER")
+  modifyUserFood(
+    @Body({ validate: { skipMissingProperties: true } }) food: Food,
+    @Param("foodId") foodId: number
+  ) {
+    return this.foodRepository.update(foodId, food);
   }
 }

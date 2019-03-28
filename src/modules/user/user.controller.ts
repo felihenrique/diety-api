@@ -22,8 +22,8 @@ export default class UserController {
 
   @Get("/:id")
   @Authorized("OWNER")
-  async getById(@Param("id") id: number) {
-    return this.userRepository.findOne(id, {relations: ["profile"]})
+  getById(@Param("id") id: number) {
+    return this.userRepository.findOne(id, { relations: ["profile"] });
   }
 
   @Post()
@@ -61,8 +61,8 @@ export default class UserController {
 
   @Post("/logout")
   @Authorized()
-  async logout(@HeaderParam("authorization") token: string) {
-    await removeToken(token);
+  logout(@HeaderParam("authorization") token: string) {
+    removeToken(token);
     return { message: "user logged out" };
   }
 }

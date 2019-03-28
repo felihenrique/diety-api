@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable
+} from "typeorm";
 import { IsNotEmpty, Allow } from "class-validator";
+import Role from "./role.model";
 
 @Entity()
 export default class RoleGroup {
@@ -14,13 +21,14 @@ export default class RoleGroup {
   @Column()
   description: string;
 
-  @IsNotEmpty()
-  @Column({ array: true })
-  role: number[];
-
   @Column({
     type: "timestamp",
     default: () => "CURRENT_TIMESTAMP"
   })
   createdAt: Date;
+
+  @IsNotEmpty()
+  @ManyToMany(type => Role)
+  @JoinTable()
+  roles: Role[];
 }
