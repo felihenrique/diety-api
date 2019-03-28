@@ -5,17 +5,13 @@ import {
   Param,
   Get,
   Authorized,
-  Put
+  Put,
+  QueryParam
 } from "routing-controllers";
 import Food from "./food.model";
 import User from "../user/user.model";
-import {
-  getRepository,
-  DeepPartial,
-  LessThanOrEqual,
-  Like,
-  Equal
-} from "typeorm";
+import { getRepository } from "typeorm";
+import { Filter } from "../../decorators/Filter";
 
 @JsonController()
 export default class FoodController {
@@ -23,15 +19,16 @@ export default class FoodController {
   foodRepository = getRepository<Food>(Food);
 
   @Get("/foods")
-  getAllFoods() {
-    return this.foodRepository.find({ loadRelationIds: true });
+  getAllFoods(@Filter() filter: Object) {
+    console.log(filter);
+    return this.foodRepository.find(filter);
   }
 
   @Authorized("OWNER")
   @Get("/users/:id/foods")
   getUserFoods(@Param("id") id: number) {
     return this.foodRepository.find({
-      where: { id: Equal(6) },
+      where: { user: { id } },
       loadRelationIds: true
     });
   }

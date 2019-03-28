@@ -3,7 +3,7 @@ import { createConnection } from "typeorm";
 import * as helmet from "koa-helmet";
 import * as Koa from "koa";
 import { getTokenData, removeToken } from "./token";
-import {isPast} from 'date-fns';
+import { isPast } from "date-fns";
 
 (async function() {
   await createConnection();
@@ -24,11 +24,11 @@ import {isPast} from 'date-fns';
       // Token does not exists
       if (!tokenData) return false;
       // Token has expired
-      if(isPast(tokenData.expiresAt)) {
+      if (isPast(tokenData.expiresAt)) {
         await removeToken(token);
         return false;
       }
-      if(roles.includes("OWNER")) {
+      if (roles.includes("OWNER")) {
         return tokenData.userId === parseInt(action.context.params.id);
       }
       return true;
@@ -36,7 +36,7 @@ import {isPast} from 'date-fns';
     currentUserChecker: async (action: Action) => {
       const token: string = action.request.headers["authorization"];
       const data = await getTokenData(token);
-      if(!data) {
+      if (!data) {
         return null;
       }
       return data.userId;
