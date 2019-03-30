@@ -2,34 +2,71 @@ export interface FilterType {
   where: Object;
 }
 
-import { createParamDecorator } from "routing-controllers";
-import { Not, LessThan } from "typeorm";
+import { createParamDecorator, BadRequestError } from "routing-controllers";
+import {
+  Not,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Equal,
+  Like,
+  In,
+  Any,
+  IsNull
+} from "typeorm";
 
 const funcMap = {
-  not: Not,
-  lessThan: LessThan
+  Not,
+  LessThan,
+  LessThanOrEqual,
+  MoreThan,
+  MoreThanOrEqual,
+  Equal,
+  Like,
+  In,
+  Any,
+  IsNull
 };
+
+function parseKeys(where) {
+  const keys = Object.keys(where);
+  keys.forEach(key => {
+    if (typeof where[key] !== "object") {
+      return;
+    }
+
+    const [fieldKey] = Object.keys(where[key]);
+
+    if (!(fieldKey in funcMap)) {
+      throw new BadRequestError(`Operador usado em ${key} não é suportado`);
+    }
+    if (fieldKey === "Not" && typeof where[key][fieldKey] === "object") {
+      const [InnerNotKey] = Object.keys(where[key][fieldKey]);
+      where[key] = funcMap["Not"](
+        funcMap[InnerNotKey](where[key]["Not"][InnerNotKey])
+      );
+    } else {
+      where[key] = funcMap[fieldKey](where[key][fieldKey]);
+    }
+  });
+}
 
 export function Filter() {
   return createParamDecorator({
     value: action => {
-      const filter = JSON.parse(action.context.query.filter) as FilterType;
+      let filter = action.context.query.filter;
       if (!filter) {
         return null;
       }
-      if (filter.where) {
-        const keys = Object.keys(filter.where);
-        keys.forEach(key => {
-          if (typeof filter.where[key] !== "object") {
-            return;
-          }
-          const fieldKeys = Object.keys(filter.where[key]);
-          fieldKeys.forEach(fieldKey => {
-            filter.where[key][fieldKey] =
-              funcMap[key][fieldKey](filter.where[key][fieldKey]) ||
-              filter.where[key][fieldKey];
-          });
-        });
+      filter = JSON.parse(filter) as FilterType;
+      const where = filter.where;
+      if (where) {
+        if (Array.isArray(where)) {
+          where.forEach(w => parseKeys(w));
+        } else if (typeof where === "object") {
+          parseKeys(where);
+        }
       }
       return filter;
     }

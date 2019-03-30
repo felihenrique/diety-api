@@ -4,9 +4,9 @@ import { IsNotEmpty, ValidateNested, Allow } from "class-validator";
 import { Type } from "class-transformer";
 
 class Nutrient {
-  @IsNotEmpty()
+  @IsNotEmpty({ message: "A quantidade é obrigatória" })
   quantity: number;
-  @IsNotEmpty()
+  @IsNotEmpty({ message: "A unidade de medida é obrigatória" })
   unit: string;
 }
 
@@ -32,8 +32,6 @@ class NutrientList {
   carbohydrates: Nutrient;
 
   @Allow()
-  @ValidateNested()
-  @Type(type => Nutrient)
   iron?: number;
 }
 

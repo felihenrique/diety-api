@@ -6,7 +6,8 @@ import {
   Get,
   Authorized,
   Put,
-  QueryParam
+  QueryParam,
+  BadRequestError
 } from "routing-controllers";
 import Food from "./food.model";
 import User from "../user/user.model";
@@ -20,7 +21,6 @@ export default class FoodController {
 
   @Get("/foods")
   getAllFoods(@Filter() filter: Object) {
-    console.log(filter);
     return this.foodRepository.find(filter);
   }
 
