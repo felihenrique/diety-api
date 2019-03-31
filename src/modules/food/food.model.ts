@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, ManyToOne, Column } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  Column,
+  BaseEntity
+} from "typeorm";
 import User from "../user/user.model";
 import { IsNotEmpty, ValidateNested, Allow } from "class-validator";
 import { Type } from "class-transformer";
@@ -36,7 +42,7 @@ class NutrientList {
 }
 
 @Entity()
-export default class Food {
+export default class Food extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

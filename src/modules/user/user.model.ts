@@ -6,7 +6,8 @@ import {
   OneToOne,
   JoinColumn,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  BaseEntity
 } from "typeorm";
 import { IsEmail, ValidateNested, IsNotEmpty } from "class-validator";
 import { IsEmailUnique } from "../../validators/isEmailUnique";
@@ -16,7 +17,7 @@ import Profile from "./profile.model";
 import RoleGroup from "./rolegroup.model";
 
 @Entity()
-export default class User {
+export default class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

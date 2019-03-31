@@ -1,7 +1,3 @@
-export interface FilterType {
-  where: Object;
-}
-
 import { createParamDecorator, BadRequestError } from "routing-controllers";
 import {
   Not,
@@ -59,7 +55,7 @@ export function Filter() {
       if (!filter) {
         return null;
       }
-      filter = JSON.parse(filter) as FilterType;
+      filter = JSON.parse(filter);
       const where = filter.where;
       if (where) {
         if (Array.isArray(where)) {

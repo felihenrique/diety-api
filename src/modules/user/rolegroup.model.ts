@@ -3,13 +3,14 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  BaseEntity
 } from "typeorm";
 import { IsNotEmpty, Allow } from "class-validator";
 import Role from "./role.model";
 
 @Entity()
-export default class RoleGroup {
+export default class RoleGroup extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

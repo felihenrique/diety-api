@@ -5,39 +5,35 @@ import {
   Param,
   Get,
   Authorized,
-  Put,
-  QueryParam,
-  BadRequestError
+  Put
 } from "routing-controllers";
 import Food from "./food.model";
 import User from "../user/user.model";
-import { getRepository } from "typeorm";
 import { Filter } from "../../decorators/Filter";
 
 @JsonController()
 export default class FoodController {
-  userRepository = getRepository<User>(User);
-  foodRepository = getRepository<Food>(Food);
-
+  @Authorized("ADMIN")
   @Get("/foods")
   getAllFoods(@Filter() filter: Object) {
-    return this.foodRepository.find(filter);
+    return User.find(filter);
   }
 
   @Authorized("OWNER")
   @Get("/users/:id/foods")
-  getUserFoods(@Param("id") id: number) {
-    return this.foodRepository.find({
-      where: { user: { id } },
-      loadRelationIds: true
-    });
+  getUserFoods(@Param("id") id: number, @Filter() filter: any) {
+    filter.where = {
+      ...filter.where,
+      user: { id }
+    };
+    return User.find(filter);
   }
 
   @Post("/users/:id/foods")
   @Authorized("OWNER")
   createUserFood(@Body() food: Food, @Param("id") id: number) {
-    food.user = this.userRepository.create({ id });
-    return this.foodRepository.save(food);
+    food.user = User.create({ id });
+    return food.save();
   }
 
   @Put("/users/:id/foods/:foodId")
@@ -47,6 +43,6 @@ export default class FoodController {
     @Param("foodId") foodId: number
   ) {
     food.id = foodId;
-    return this.foodRepository.save(food);
+    return food.save();
   }
 }

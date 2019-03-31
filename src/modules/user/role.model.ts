@@ -1,9 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  BaseEntity
+} from "typeorm";
 import { IsNotEmpty, Allow } from "class-validator";
 import RoleGroup from "./rolegroup.model";
 
 @Entity()
-export default class Role {
+export default class Role extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 

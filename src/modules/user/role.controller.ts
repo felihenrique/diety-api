@@ -9,24 +9,21 @@ import {
   Param,
   Put
 } from "routing-controllers";
-import { getRepository } from "typeorm";
 import Role from "./role.model";
-import { FilterType, Filter } from "../../decorators/Filter";
+import { Filter } from "../../decorators/Filter";
 
 @JsonController("/roles")
 export default class RoleController {
-  roleRepository = getRepository(Role);
-
   @Get()
   @Authorized("ADMIN")
-  getRoles(@Filter() @QueryParam("filter") filter: FilterType) {
-    return this.roleRepository.find(filter);
+  getRoles(@Filter() @QueryParam("filter") filter: Object) {
+    return Role.find(filter);
   }
 
   @Post()
   @Authorized("ADMIN")
   createRole(@Body() role: Role) {
-    return this.roleRepository.save(role);
+    return role.save();
   }
 
   @Put("/:id")
@@ -36,12 +33,12 @@ export default class RoleController {
     @Body({ validate: { skipMissingProperties: true } }) role: Role
   ) {
     role.id = id;
-    return this.roleRepository.save(role);
+    return role.save();
   }
 
   @Delete("/:id")
   @Authorized("ADMIN")
   deleteRole(@Param("id") id: number) {
-    return this.roleRepository.delete(id);
+    return Role.delete(id);
   }
 }
