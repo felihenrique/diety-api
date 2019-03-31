@@ -46,6 +46,7 @@ export default class FoodController {
     @Body({ validate: { skipMissingProperties: true } }) food: Food,
     @Param("foodId") foodId: number
   ) {
-    return this.foodRepository.update(foodId, food);
+    food.id = foodId;
+    return this.foodRepository.save(food);
   }
 }

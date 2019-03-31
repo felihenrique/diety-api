@@ -35,7 +35,8 @@ export default class RoleController {
     @Param("id") id: number,
     @Body({ validate: { skipMissingProperties: true } }) role: Role
   ) {
-    return this.roleRepository.update(id, role);
+    role.id = id;
+    return this.roleRepository.save(role);
   }
 
   @Delete("/:id")

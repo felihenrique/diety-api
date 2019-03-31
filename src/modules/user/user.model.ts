@@ -1,9 +1,19 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from "typeorm";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable
+} from "typeorm";
 import { IsEmail, ValidateNested, IsNotEmpty } from "class-validator";
 import { IsEmailUnique } from "../../validators/isEmailUnique";
 import Food from "../food/food.model";
 import { Exclude, Type } from "class-transformer";
 import Profile from "./profile.model";
+import RoleGroup from "./rolegroup.model";
 
 @Entity()
 export default class User {
@@ -32,7 +42,7 @@ export default class User {
   })
   createdAt: Date;
 
-  @OneToOne(type => Profile)
+  @OneToOne(type => Profile, { cascade: true })
   @ValidateNested()
   @Type(type => Profile)
   @IsNotEmpty()
@@ -41,4 +51,8 @@ export default class User {
 
   @OneToMany(type => Food, food => food.user)
   foods: Promise<Food[]>;
+
+  @ManyToMany(type => RoleGroup)
+  @JoinTable()
+  rolesGroups: Promise<RoleGroup[]>;
 }

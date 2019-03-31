@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from "typeorm";
 import { IsNotEmpty, Allow } from "class-validator";
+import RoleGroup from "./rolegroup.model";
 
 @Entity()
 export default class Role {
@@ -11,7 +12,7 @@ export default class Role {
   name: string;
 
   @Allow()
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @Column({
@@ -19,4 +20,7 @@ export default class Role {
     default: () => "CURRENT_TIMESTAMP"
   })
   createdAt: Date;
+
+  @ManyToMany(type => RoleGroup, roleGroup => roleGroup.roles)
+  roleGroups: RoleGroup;
 }

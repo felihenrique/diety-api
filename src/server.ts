@@ -16,7 +16,7 @@ import { isPast } from "date-fns";
       forbidNonWhitelisted: true,
       validationError: { target: false }
     },
-    authorizationChecker: async (action: Action, roles: String[]) => {
+    authorizationChecker: async (action: Action, roles: string[]) => {
       const token: string = action.request.headers["authorization"];
       // User does not passed the token
       if (!token) return false;
@@ -28,10 +28,16 @@ import { isPast } from "date-fns";
         await removeToken(token);
         return false;
       }
-      if (roles.includes("OWNER")) {
+      // Owner inside the route /users
+      if (roles.length === 1 && roles[0] === "OWNER") {
         return tokenData.userId === parseInt(action.context.params.id);
       }
-      return true;
+      // One or more roles required
+      else if (roles.length > 0) {
+        return roles.every(role => tokenData.roles.includes(role));
+      }
+      // No roles, deny
+      return false;
     },
     currentUserChecker: async (action: Action) => {
       const token: string = action.request.headers["authorization"];

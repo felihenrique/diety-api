@@ -18,7 +18,7 @@ export default class RoleGroup {
   name: string;
 
   @Allow()
-  @Column()
+  @Column({ nullable: true })
   description: string;
 
   @Column({
@@ -28,7 +28,7 @@ export default class RoleGroup {
   createdAt: Date;
 
   @IsNotEmpty()
-  @ManyToMany(type => Role)
+  @ManyToMany(type => Role, { eager: true })
   @JoinTable()
   roles: Role[];
 }
