@@ -4,6 +4,8 @@ import * as helmet from "koa-helmet";
 import * as Koa from "koa";
 import { getTokenData, removeToken } from "./token";
 import { isPast } from "date-fns";
+import isOwnerChecker from "./utils/isOwnerChecker";
+import { Operator } from "./utils/roleOperators";
 
 (async function() {
   await createConnection();
@@ -28,16 +30,22 @@ import { isPast } from "date-fns";
         await removeToken(token);
         return false;
       }
-      // Owner inside the route /users
-      if (roles.length === 1 && roles[0] === "OWNER") {
-        return tokenData.userId === parseInt(action.context.params.id);
-      }
-      // One or more roles required
-      else if (roles.length > 0) {
-        return roles.every(role => tokenData.roles.includes(role));
-      }
+      // Only consider first role, in case of more than one, use operators
+      const role: any = roles[0];
       // No roles, deny
-      return false;
+      if (!role) {
+        return false;
+      }
+      switch (typeof role) {
+        case "string":
+          return role.startsWith("OWNER:")
+            ? await isOwnerChecker(action, role.split(":")[1], tokenData)
+            : tokenData.roles.includes(role);
+        case "function":
+          return await (role as Operator)(tokenData, action);
+        default:
+          return false;
+      }
     },
     currentUserChecker: async (action: Action) => {
       const token: string = action.request.headers["authorization"];

@@ -41,6 +41,13 @@ class NutrientList {
   iron?: number;
 }
 
+class UnitMeasure {
+  @IsNotEmpty({ message: "O nome da unidade de medida é obrigatório" })
+  name: string;
+  @IsNotEmpty({ message: "A quantidade da unidade de medida é obrigatória" })
+  quantity: number;
+}
+
 @Entity()
 export default class Food extends BaseEntity {
   @PrimaryGeneratedColumn()
@@ -54,9 +61,12 @@ export default class Food extends BaseEntity {
   @IsNotEmpty({ message: "A categoria é obrigatória" })
   category: string;
 
-  @Column({
-    type: "json"
-  })
+  @Column({ type: "json" })
+  @ValidateNested()
+  @Type(type => UnitMeasure)
+  units: UnitMeasure[];
+
+  @Column({ type: "json", nullable: true })
   @ValidateNested()
   @Type(type => NutrientList)
   @IsNotEmpty()

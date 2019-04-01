@@ -7,7 +7,7 @@ client.on("error", function(err) {
   console.log(err);
 });
 
-interface TokenData {
+export interface TokenData {
   userId: number;
   expiresAt: number;
   roles: string[];

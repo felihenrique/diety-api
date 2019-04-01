@@ -53,7 +53,7 @@ export function Filter() {
     value: action => {
       let filter = action.context.query.filter;
       if (!filter) {
-        return null;
+        return {};
       }
       filter = JSON.parse(filter);
       const where = filter.where;

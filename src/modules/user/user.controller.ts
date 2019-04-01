@@ -18,6 +18,7 @@ import { setTokenData, removeToken } from "../../token";
 import { TOKEN_TTL } from "../../config";
 import RoleGroup from "./rolegroup.model";
 import { Filter } from "../../decorators/Filter";
+import { Or } from "../../utils/roleOperators";
 
 @JsonController("/users")
 export default class UserController {
@@ -28,7 +29,7 @@ export default class UserController {
   }
 
   @Get("/:id")
-  @Authorized("OWNER")
+  @Authorized(Or(["OWNER:User", "ADMIN"]))
   getById(@Param("id") id: number) {
     return User.findOne(id, { relations: ["profile"] });
   }
@@ -42,7 +43,7 @@ export default class UserController {
     return user.save();
   }
 
-  @Authorized("OWNER")
+  @Authorized(Or(["OWNER:User", "ADMIN"]))
   @Put("/:id")
   async updateUser(
     @Body({ validate: { skipMissingProperties: true } }) user: User,
