@@ -13,15 +13,19 @@ import {
 } from "routing-controllers";
 import User from "./user.model";
 import * as bcrypt from "bcrypt";
-import * as uuid from "uuid/v4";
-import { setTokenData, removeToken } from "../../token";
+import uuid from "uuid/v4";
 import { TOKEN_TTL } from "../../config";
 import RoleGroup from "./rolegroup.model";
 import { Filter } from "../../decorators/Filter";
 import { Or } from "../../utils/roleOperators";
+import { TokenService } from "../../services/TokenService";
+import { Inject } from "typedi";
 
 @JsonController("/users")
 export default class UserController {
+  @Inject()
+  tokenService : TokenService;
+
   @Get()
   @Authorized("ADMIN")
   getAllUsers(@Filter() filter: Object) {
@@ -68,7 +72,7 @@ export default class UserController {
     }
     const token = uuid();
     const userRoleGroups = await user.rolesGroups;
-    await setTokenData(token, {
+    await this.tokenService.set(token, {
       userId: user.id,
       expiresAt: Date.now() + TOKEN_TTL,
       // Concat every role group and roles inside role groups
@@ -94,7 +98,7 @@ export default class UserController {
   @Post("/logout")
   @Authorized()
   logout(@HeaderParam("authorization") token: string) {
-    removeToken(token);
+    this.tokenService.remove(token);
     return { message: "user logged out" };
   }
 

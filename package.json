@@ -4,8 +4,8 @@
   "description": "The diety app api",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon --exec 'node --inspect -r ts-node/register' ./src/server.ts"
+    "test": "NODE_ENV=test mocha --require ts-node/register \"test/**/*.ts\"",
+    "start": "NODE_ENV=dev nodemon --exec 'node --inspect -r ts-node/register' ./src/boot.ts"
   },
   "author": "philipe",
   "license": "ISC",
@@ -19,6 +19,9 @@
     "@types/node": "^11.11.5",
     "@types/redis": "^2.8.11",
     "@types/uuid": "^3.4.4",
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.1",
+    "mocha": "^6.1.2",
     "nodemon": "^1.18.10",
     "ts-node": "^8.0.3",
     "typescript": "^3.3.4000"
@@ -35,6 +38,7 @@
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.7.7",
+    "typedi": "^0.8.0",
     "typeorm": "^0.2.15",
     "uuid": "^3.3.2"
   }
