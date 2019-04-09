@@ -1,7 +1,7 @@
 import server from './server';
+import { createConnection } from 'typeorm';
 
 (async function() {
-    const app = await server;
-    app.listen(3000, "0.0.0.0");
+    await createConnection();
     console.log("App running on port 3000");
 })();

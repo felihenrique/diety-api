@@ -1,4 +1,3 @@
 export default {
-  ADMIN: "ADMIN",
-  OWNER: "OWNER"
+  ADMIN: "ADMIN"
 };

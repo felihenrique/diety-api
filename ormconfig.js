@@ -11,9 +11,13 @@ module.exports = [{
   database: "diety",
   entities: [path.join(__dirname, "src/modules/**/*.model.ts")],
   //synchronize: true,
-  logging: true
+  logging: true,
+  cli: {
+    migrationsDir: 'src/migrations',
+  }
 }, {
   environment: "test",
   name: "test",
-  type: ":memory:"
+  type: ":memory:",
+  entities: [path.join(__dirname, "src/modules/**/*.model.ts")],
 }];

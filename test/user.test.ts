@@ -5,22 +5,21 @@ import server from "../src/server";
 import chai, { expect } from "chai";
 import chaiHttp from "chai-http";
 import { it, describe, before } from "mocha";
+import { createConnection } from "typeorm";
 
 chai.use(chaiHttp);
 Container.set(TokenService, new FakeTokenService());
-let app = null;
 
-before(async () => {
-    app = await server;
-    return;
+before(() => {
+    return createConnection();
 });
 
-describe("Main", () => {
-  it("should not get /", async () => {
+describe("User", () => {
+  it("normal user can not get /users", async () => {
     const response = await chai
-      .request(app)
-      .get("/")
+      .request(server)
+      .get("/users")
       .send();
-    expect(response).to.not.have.status(200);
+    expect(response).to.have.status(403);
   });
 });
