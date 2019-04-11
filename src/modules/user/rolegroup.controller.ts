@@ -11,19 +11,22 @@ import {
 } from "routing-controllers";
 import { Filter } from "../../decorators/Filter";
 import RoleGroup from "./rolegroup.model";
+import { getRepository } from "typeorm";
 
 @JsonController("/role-groups")
-export default class RoleController {
+export default class RoleGroupController {
+  private roleGroupRepository = getRepository(RoleGroup);
+
   @Get()
   @Authorized("ADMIN")
   getRoles(@Filter() @QueryParam("filter") filter: Object) {
-    return RoleGroup.find(filter);
+    return this.roleGroupRepository.find(filter);
   }
 
   @Post()
   @Authorized("ADMIN")
   createRole(@Body() role: RoleGroup) {
-    return role.save();
+    return this.roleGroupRepository.save(role);
   }
 
   @Put("/:id")
@@ -33,12 +36,12 @@ export default class RoleController {
     @Body({ validate: { skipMissingProperties: true } }) role: RoleGroup
   ) {
     role.id = id;
-    return role.save();
+    return this.roleGroupRepository.save(role);
   }
 
   @Delete("/:id")
   @Authorized("ADMIN")
   deleteRole(@Param("id") id: number) {
-    return RoleGroup.delete(id);
+    return this.roleGroupRepository.delete(id);
   }
 }

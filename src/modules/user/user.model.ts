@@ -17,7 +17,7 @@ import Profile from "./profile.model";
 import RoleGroup from "./rolegroup.model";
 
 @Entity()
-export default class User extends BaseEntity {
+export default class User {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -38,7 +38,6 @@ export default class User extends BaseEntity {
   password: string;
 
   @Column({
-    type: "timestamp",
     default: () => "CURRENT_TIMESTAMP"
   })
   createdAt: Date;

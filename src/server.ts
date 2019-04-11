@@ -3,6 +3,14 @@ import helmet from "koa-helmet";
 import Koa from "koa";
 import authorizationChecker from "../src/utils/authorizationChecker";
 import currentUserChecker from "../src/utils/currentUserChecker";
+import Container from "typedi";
+import FakeTokenService from "../test/services/FakeTokenService";
+import TokenService from "./services/TokenService";
+
+Container.set(
+  "tokenService",
+  process.env.NODE_ENV === "test" ? new FakeTokenService() : new TokenService()
+);
 
 const app: Koa = createKoaServer({
   controllers: [__dirname + "/**/*.controller.ts"],
@@ -19,6 +27,4 @@ const app: Koa = createKoaServer({
 
 app.use(helmet());
 
-const server = app.listen(3000, "0.0.0.0");
-
-export default server;
+export default app;

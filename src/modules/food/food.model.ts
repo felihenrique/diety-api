@@ -2,8 +2,7 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   ManyToOne,
-  Column,
-  BaseEntity
+  Column
 } from "typeorm";
 import User from "../user/user.model";
 import { IsNotEmpty, ValidateNested, Allow } from "class-validator";
@@ -49,7 +48,7 @@ class UnitMeasure {
 }
 
 @Entity()
-export default class Food extends BaseEntity {
+export default class Food {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -61,12 +60,12 @@ export default class Food extends BaseEntity {
   @IsNotEmpty({ message: "A categoria é obrigatória" })
   category: string;
 
-  @Column({ type: "json" })
+  @Column({ type: process.env.NODE_ENV === 'test' ? "simple-json" : "json", nullable: true })
   @ValidateNested()
   @Type(type => UnitMeasure)
   units: UnitMeasure[];
 
-  @Column({ type: "json", nullable: true })
+  @Column({ type: process.env.NODE_ENV === 'test' ? "simple-json" : "json"})
   @ValidateNested()
   @Type(type => NutrientList)
   @IsNotEmpty()

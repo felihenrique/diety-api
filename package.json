@@ -6,7 +6,8 @@
   "scripts": {
     "test": "NODE_ENV=test mocha --require ts-node/register \"test/**/*.ts\"",
     "start": "NODE_ENV=dev nodemon --exec 'node --inspect -r ts-node/register' ./src/boot.ts",
-    "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f ./ormconfig.js"
+    "typeorm:cli": "ts-node ./node_modules/typeorm/cli -f ./ormconfig.js",
+    "starttest": "NODE_ENV=test nodemon --exec 'node --inspect -r ts-node/register' ./src/boot.ts"
   },
   "author": "philipe",
   "license": "ISC",
@@ -39,6 +40,7 @@
     "redis": "^2.8.0",
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.7.7",
+    "sqlite3": "^4.0.6",
     "typedi": "^0.8.0",
     "typeorm": "^0.2.15",
     "uuid": "^3.3.2"

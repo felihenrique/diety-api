@@ -1,11 +1,4 @@
 import * as redis from "redis";
-import { Service } from "typedi";
-
-const client = redis.createClient();
-
-client.on("error", function(err) {
-  console.log(err);
-});
 
 export interface TokenData {
   userId: number;
@@ -13,8 +6,14 @@ export interface TokenData {
   roles: string[];
 }
 
-@Service()
-export class TokenService {
+export default class TokenService {
+  private client = null;
+  constructor() {
+    this.client = redis.createClient();
+    this.client.on("error", function(err) {
+      console.log(err);
+    });
+  }
   /**
    * Atribui dados a um token no servidor de autenticação
    * @param token Token para atribuir os dados
@@ -22,7 +21,7 @@ export class TokenService {
    */
   set(token: string, data: TokenData): Promise<number> {
     return new Promise((resolve, reject) => {
-      client.hset("tokens", token, JSON.stringify(data), (err, reply) => {
+      this.client.hset("tokens", token, JSON.stringify(data), (err, reply) => {
         if (err) reject(err);
         resolve(reply);
       });
@@ -35,7 +34,7 @@ export class TokenService {
    */
   get(token: string): Promise<TokenData> {
     return new Promise((resolve, reject) => {
-      client.hget("tokens", token, (err, reply) => {
+      this.client.hget("tokens", token, (err, reply) => {
         if (err) reject(err);
         resolve(JSON.parse(reply));
       });
@@ -48,7 +47,7 @@ export class TokenService {
    */
   remove(token: string): Promise<number> {
     return new Promise((resolve, reject) => {
-      client.hset("tokens", token, null, (err, reply) => {
+      this.client.hdel("tokens", token, (err, reply) => {
         if (err) reject(err);
         resolve(reply);
       });
@@ -61,7 +60,7 @@ export class TokenService {
    */
   exists(token: string): Promise<boolean> {
     return new Promise((resolve, reject) => {
-      client.hexists("tokens", token, (err, reply) => {
+      this.client.hexists("tokens", token, (err, reply) => {
         if (err) reject(err);
         resolve(reply === 1);
       });

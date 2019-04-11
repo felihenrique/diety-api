@@ -22,9 +22,9 @@ export default class TokenService {
    * @param token Token para retornar os dados
    */
   get(token: string): Promise<TokenData> {
-    if(!(token in tokens)) {
-      throw Error();
-    } 
+    if (!(token in tokens)) {
+      return null;
+    }
     return tokens[token];
   }
 
@@ -33,8 +33,8 @@ export default class TokenService {
    * @param token Token para remover
    */
   async remove(token: string): Promise<number> {
-    if(!(token in tokens)) {
-        throw Error();
+    if (!(token in tokens)) {
+      throw Error();
     }
     delete tokens[token];
     return 1;
@@ -45,7 +45,6 @@ export default class TokenService {
    * @param token Token para verificar se existe
    */
   async exists(token: string): Promise<boolean> {
-    console.log('usando o fake');
     return token in tokens;
   }
 }

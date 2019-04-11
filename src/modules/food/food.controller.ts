@@ -11,13 +11,17 @@ import Food from "./food.model";
 import User from "../user/user.model";
 import { Filter } from "../../decorators/Filter";
 import { Or } from "../../utils/roleOperators";
+import { getRepository } from "typeorm";
 
 @JsonController()
 export default class FoodController {
+  private foodRepository = getRepository(Food);
+  private userRepository = getRepository(User);
+
   @Authorized("ADMIN")
   @Get("/foods")
   getAllFoods(@Filter() filter: Object) {
-    return Food.find(filter);
+    return this.foodRepository.find(filter);
   }
 
   @Authorized(Or(["OWNER:User", "ADMIN"]))
@@ -27,14 +31,14 @@ export default class FoodController {
       ...filter.where,
       user: { id }
     };
-    return Food.find(filter);
+    return this.foodRepository.find(filter);
   }
 
   @Post("/users/:id/foods")
   @Authorized("OWNER:User")
   createUserFood(@Body() food: Food, @Param("id") id: number) {
-    food.user = User.create({ id });
-    return food.save();
+    food.user = this.userRepository.create({ id });
+    return this.foodRepository.save(food);
   }
 
   @Put("/users/:id/foods/:foodId")
@@ -44,6 +48,6 @@ export default class FoodController {
     @Param("foodId") foodId: number
   ) {
     food.id = foodId;
-    return food.save();
+    return this.foodRepository.save(food);
   }
 }

@@ -9,7 +9,7 @@ import { IsNotEmpty } from "class-validator";
 import User from "./user.model";
 
 @Entity()
-export default class Profile extends BaseEntity {
+export default class Profile {
   @PrimaryGeneratedColumn()
   id: number;
 

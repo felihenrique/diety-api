@@ -9,7 +9,7 @@ import { IsNotEmpty, Allow } from "class-validator";
 import RoleGroup from "./rolegroup.model";
 
 @Entity()
-export default class Role extends BaseEntity {
+export default class Role {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -22,7 +22,6 @@ export default class Role extends BaseEntity {
   description: string;
 
   @Column({
-    type: "timestamp",
     default: () => "CURRENT_TIMESTAMP"
   })
   createdAt: Date;

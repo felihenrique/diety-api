@@ -1,6 +1,6 @@
 import { Action } from "routing-controllers";
 import Container from "typedi";
-import { TokenService } from "../services/TokenService";
+import TokenService from "../services/TokenService";
 
 export default async function(action: Action) {
   const tokenService = Container.get(TokenService);

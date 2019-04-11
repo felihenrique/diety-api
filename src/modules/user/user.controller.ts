@@ -18,24 +18,26 @@ import { TOKEN_TTL } from "../../config";
 import RoleGroup from "./rolegroup.model";
 import { Filter } from "../../decorators/Filter";
 import { Or } from "../../utils/roleOperators";
-import { TokenService } from "../../services/TokenService";
+import TokenService from "../../services/TokenService";
 import { Inject } from "typedi";
+import { getRepository } from "typeorm";
 
 @JsonController("/users")
 export default class UserController {
-  @Inject()
-  tokenService : TokenService;
+  @Inject("tokenService")
+  private tokenService : TokenService;
+  private userRepository = getRepository(User);
 
   @Get()
   @Authorized("ADMIN")
   getAllUsers(@Filter() filter: Object) {
-    return User.find(filter);
+    return this.userRepository.find(filter);
   }
 
   @Get("/:id")
   @Authorized(Or(["OWNER:User", "ADMIN"]))
   getById(@Param("id") id: number) {
-    return User.findOne(id, { relations: ["profile"] });
+    return this.userRepository.findOne(id, { relations: ["profile"] });
   }
 
   @Post()
@@ -44,7 +46,7 @@ export default class UserController {
     @BodyParam("password", { required: true }) password: string
   ) {
     user.password = await bcrypt.hash(password, 5);
-    return user.save();
+    return this.userRepository.save(user);
   }
 
   @Authorized(Or(["OWNER:User", "ADMIN"]))
@@ -54,7 +56,7 @@ export default class UserController {
     @Param("id") id: number
   ) {
     user.id = id;
-    return user.save();
+    return this.userRepository.save(user);
   }
 
   @Post("/login")
@@ -62,7 +64,7 @@ export default class UserController {
     @BodyParam("email") email: string,
     @BodyParam("password") password: string
   ) {
-    const user = await User.findOne({ where: { email } });
+    const user = await this.userRepository.findOne({ where: { email } });
     if (!user) {
       throw new UnauthorizedError();
     }
@@ -108,11 +110,11 @@ export default class UserController {
     @Body() roleGroups: RoleGroup[],
     @Param("id") id: number
   ) {
-    const user = await User.findOne(id);
+    const user = await this.userRepository.findOne(id);
     if (!user) {
       throw new NotFoundError();
     }
     user.rolesGroups = Promise.resolve(roleGroups);
-    return user.save();
+    return this.userRepository.save(user);
   }
 }
